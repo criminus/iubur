@@ -1,0 +1,8 @@
+services:
+    anix.iubur.listener:
+        class: anix\iubur\event\main_listener
+        arguments:
+            - '@language'
+            - '@user'
+        tags:
+            - { name: event.listener }
