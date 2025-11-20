@@ -97,7 +97,7 @@ class main_listener implements EventSubscriberInterface
 
 		$user_cache_data['ban_userid']      = $row['ban_userid'] ?? 0;
 		$user_cache_data['ban_end']         = $row['ban_end'] ?? null;
-		$user_cache_data['user_lastvisit']  = $row['user_lastvisit'] ?? 0;
+		$user_cache_data['user_last_active']  = $row['user_last_active'] ?? 0;
 
 		$event['user_cache_data'] = $user_cache_data;
 	}
@@ -115,13 +115,13 @@ class main_listener implements EventSubscriberInterface
 			$user_data = $user_cache[$poster_id];
 
 			$user_ban_end    = $user_data['ban_end'] ?? null;
-			$user_last_visit = $user_data['user_lastvisit'] ?? 0;
+			$user_last_active = $user_data['user_last_active'] ?? 0;
 
 			$is_banned = ($user_ban_end !== null && ($user_ban_end == 0 || $user_ban_end > $current_time));
 			$ban_end_date = ($user_ban_end > 0) ? $this->user->format_date($user_ban_end) : '';
-			$time_difference = $current_time - $user_last_visit;
+			$time_difference = $current_time - $user_last_active;
 			$months_passed = floor($time_difference / (30 * 86400));
-			$is_inactive = ($user_last_visit > 0 && $user_last_visit < $current_time - 30 * 86400);
+			$is_inactive = ($user_last_active > 0 && $user_last_active < $current_time - 30 * 86400);
 
 			if ($is_banned) {
 				$post_row['RANK_TITLE'] = ($user_ban_end == 0)
@@ -149,13 +149,13 @@ class main_listener implements EventSubscriberInterface
 		$current_time = time();
 
 		$user_ban_end    = $data['ban_end'] ?? null;
-		$user_last_visit = $data['user_lastvisit'] ?? 0;
+		$user_last_active = $data['user_last_active'] ?? 0;
 
 		$is_banned = ($user_ban_end !== null && ($user_ban_end == 0 || $user_ban_end > $current_time));
 		$ban_end_date = ($user_ban_end > 0) ? $this->user->format_date($user_ban_end) : '';
-		$time_difference = $current_time - $user_last_visit;
+		$time_difference = $current_time - $user_last_active;
 		$months_passed = floor($time_difference / (30 * 86400));
-		$is_inactive = ($user_last_visit > 0 && $user_last_visit < $current_time - 30 * 86400);
+		$is_inactive = ($user_last_active > 0 && $user_last_active < $current_time - 30 * 86400);
 
 		if ($is_banned) {
 			$template_data['RANK_TITLE'] = ($user_ban_end == 0)
