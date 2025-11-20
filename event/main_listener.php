@@ -115,13 +115,13 @@ class main_listener implements EventSubscriberInterface
 			$user_data = $user_cache[$poster_id];
 
 			$user_ban_end    = $user_data['ban_end'] ?? null;
-			$user_type       = $user_data['user_type']; // 1 = Inactive
 			$user_last_visit = $user_data['user_lastvisit'] ?? 0;
 
 			$is_banned = ($user_ban_end !== null && ($user_ban_end == 0 || $user_ban_end > $current_time));
 			$ban_end_date = ($user_ban_end > 0) ? $this->user->format_date($user_ban_end) : '';
 			$time_difference = $current_time - $user_last_visit;
 			$months_passed = floor($time_difference / (30 * 86400));
+			$is_inactive = ($user_last_visit > 0 && $user_last_visit < $current_time - 30 * 86400);
 
 			if ($is_banned) {
 				$post_row['RANK_TITLE'] = ($user_ban_end == 0)
@@ -131,7 +131,7 @@ class main_listener implements EventSubscriberInterface
 				$post_row['RANK_IMG_SRC'] = '';
 			}
 
-			if ($user_type == 1) {
+			if ($is_inactive) {
 				$post_row['RANK_TITLE'] = $this->user->lang('POSTER_INACTIVE_FOR', $months_passed);
 				$post_row['RANK_IMG'] = '';
 				$post_row['RANK_IMG_SRC'] = '';
@@ -149,13 +149,13 @@ class main_listener implements EventSubscriberInterface
 		$current_time = time();
 
 		$user_ban_end    = $data['ban_end'] ?? null;
-		$user_type       = $data['user_type']; // 1 = Inactive
 		$user_last_visit = $data['user_lastvisit'] ?? 0;
 
 		$is_banned = ($user_ban_end !== null && ($user_ban_end == 0 || $user_ban_end > $current_time));
 		$ban_end_date = ($user_ban_end > 0) ? $this->user->format_date($user_ban_end) : '';
 		$time_difference = $current_time - $user_last_visit;
 		$months_passed = floor($time_difference / (30 * 86400));
+		$is_inactive = ($user_last_visit > 0 && $user_last_visit < $current_time - 30 * 86400);
 
 		if ($is_banned) {
 			$template_data['RANK_TITLE'] = ($user_ban_end == 0)
@@ -165,7 +165,7 @@ class main_listener implements EventSubscriberInterface
 			$template_data['RANK_IMG_SRC'] = '';
 		}
 
-		if ($user_type == 1) {
+		if ($is_inactive) {
 			$template_data['RANK_TITLE'] = $this->user->lang('POSTER_INACTIVE_FOR', $months_passed);
 			$template_data['RANK_IMG'] = '';
 			$template_data['RANK_IMG_SRC'] = '';
